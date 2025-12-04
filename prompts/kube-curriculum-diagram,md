@@ -1,0 +1,224 @@
+Here is the **same full cloud-security architecture diagram**, rendered cleanly in **Markdown-friendly ASCII**, ready for GitHub README files.
+
+---
+
+# 🛡️ **Cloud Security Architecture (Markdown ASCII Diagram)**
+
+```markdown
+                                 ┌──────────────────────────┐
+                                 │        Developer         │
+                                 │   (Code / Commits)       │
+                                 └─────────────┬────────────┘
+                                               │
+                                               ▼
+                             ┌──────────────────────────────────┐
+                             │            CI/CD Pipeline        │
+                             │  - Linting                       │
+                             │  - Unit Tests                    │
+                             │  - IaC Scan (tfsec/kics)         │
+                             └───────────┬──────────────────────┘
+                                         │
+                    ┌────────────────────┼────────────────────┐
+                    │                    │                    │
+                    ▼                    ▼                    ▼
+       ┌──────────────────┐   ┌──────────────────┐   ┌──────────────────┐
+       │ Vulnerability     │   │ SBOM Generator    │   │ Image Signing    │
+       │ Scanning          │   │ (Syft)            │   │ (cosign)         │
+       │ (Trivy/Grype)     │   └──────────────────┘   └──────────────────┘
+       └──────────────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  Hardened Container  │
+         │   Image Artifact     │
+         └───────────┬──────────┘
+                     │  (push signed image)
+                     ▼
+       ┌──────────────────────────────────────────────┐
+       │              AWS ECR (Private Repo)          │
+       │  - Image Scanning (Enhanced)                 │
+       │  - Lifecycle Policies                        │
+       │  - Signature Verification (cosign/OCI)       │
+       └───────────────┬──────────────────────────────┘
+                       │
+              ┌────────┴────────┐
+              │                 │
+              ▼                 ▼
+  ┌─────────────────┐   ┌────────────────────────┐
+  │ AWS EKS Cluster  │   │ AWS ECS Fargate        │
+  │------------------│   │------------------------│
+  │ - IRSA (IAM SA)  │   │ - Least-Priv Task Role │
+  │ - RBAC           │   │ - SG Firewall Rules    │
+  │ - NetworkPolicy  │   │ - Private Subnets      │
+  │ - PSS (restricted)   │ - Secrets Manager Env  │
+  └─────────┬────────┘   └───────────────┬────────┘
+            │                            │
+            ▼                            ▼
+   ┌──────────────────┐         ┌──────────────────┐
+   │   Application     │         │  Application     │
+   │ (Pod/Deployment)  │         │  (Task/Service)  │
+   └─────────┬────────┘         └─────────┬────────┘
+             │                              │
+             ▼                              ▼
+     ┌────────────────┐             ┌────────────────┐
+     │   Logging       │             │   Monitoring    │
+     │ (CloudWatch/K8s)│             │ (Metrics/ALB/SG)│
+     └────────────────┘             └────────────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │       End User       │
+         │  Uses App via ALB    │
+         └──────────────────────┘
+```
+
+---
+
+# ✔ This version is optimized for:
+
+* GitHub READMEs
+* Markdown documentation
+* Wiki pages
+* Technical design docs
+* Security architecture reports
+
+If you want, I can also:
+
+✅ convert this into a **mermaid diagram** (flowchart)
+✅ generate a **detailed architectural explanation**
+✅ produce a “**Threat Model (STRIDE)**” for this architecture
+✅ embed it directly into your GitHub folder structure from earlier
+
+Just tell me!
+
+
+and Mermaid
+
+Here is the **same cloud-security architecture diagram recreated in Mermaid**, fully compatible with GitHub, GitLab, Obsidian, MkDocs, and VS Code Markdown preview.
+
+This is a **flowchart-style secure CI/CD → ECR → EKS/ECS** architecture with scanning, signing, IAM, and network controls.
+
+---
+
+# 🛡️ **Cloud Security Architecture — Mermaid Diagram**
+
+```mermaid
+flowchart TD
+
+    %% ===============================
+    %% Developer & CI/CD
+    %% ===============================
+
+    DEV[Developer<br/>(Code / Commits)]
+    CICD[CI/CD Pipeline<br/>- Linting<br/>- Unit Tests<br/>- IaC Scans]
+
+    DEV --> CICD
+
+    %% ===============================
+    %% Security Scanning & Supply Chain
+    %% ===============================
+
+    SCAN[Vulnerability Scanning<br/>(Trivy / Grype)]
+    SBOM[SBOM Generation<br/>(Syft)]
+    SIGN[Image Signing<br/>(cosign)]
+
+    CICD --> SCAN
+    CICD --> SBOM
+    CICD --> SIGN
+
+    %% ===============================
+    %% Hardened Image Artifact
+    %% ===============================
+
+    IMAGE[Hardened Container Image]
+
+    SCAN --> IMAGE
+    SBOM --> IMAGE
+    SIGN --> IMAGE
+
+    %% ===============================
+    %% ECR
+    %% ===============================
+
+    ECR[AWS ECR<br/>- Image Scanning<br/>- Lifecycle Policies<br/>- Signature Verification]
+
+    IMAGE -->|Push Signed Image| ECR
+
+    %% ===============================
+    %% EKS & ECS Branches
+    %% ===============================
+
+    EKS[AWS EKS Cluster<br/>- IRSA<br/>- RBAC<br/>- NetworkPolicies<br/>- PSS Restricted]
+    ECS[AWS ECS Fargate<br/>- Least-Priv Task Role<br/>- Private Subnets<br/>- Secrets Manager]
+
+    ECR --> EKS
+    ECR --> ECS
+
+    %% ===============================
+    %% Application Workloads
+    %% ===============================
+
+    APP_EKS[EKS Application<br/>(Pods/Deployments)]
+    APP_ECS[ECS Application<br/>(Tasks/Services)]
+
+    EKS --> APP_EKS
+    ECS --> APP_ECS
+
+    %% ===============================
+    %% Logging & Monitoring
+    %% ===============================
+
+    LOGS[CloudWatch / K8s Logs]
+    MON[Monitoring<br/>(Metrics / ALB / SGs)]
+
+    APP_EKS --> LOGS
+    APP_ECS --> LOGS
+
+    APP_EKS --> MON
+    APP_ECS --> MON
+
+    %% ===============================
+    %% End User
+    %% ===============================
+
+    USER[End User<br/>via ALB]
+
+    MON --> USER
+```
+
+---
+
+# ✔ How it renders (if your platform supports Mermaid)
+
+It will show:
+
+* Developer → CI/CD → scanning → signing → ECR
+* EKS & ECS branching from ECR
+* Secure workloads
+* Logging & monitoring
+* End-user access
+
+Perfect for **README files**, **architecture docs**, **cybersecurity reports**, and **DevSecOps portfolios**.
+
+---
+
+# Want an alternate style?
+
+I can generate variations:
+
+### ✅ Layered architecture
+
+### ✅ Left-to-right flow
+
+### ✅ Clustered sections with subgraphs
+
+### ✅ Dark theme optimized
+
+### ✅ Mermaid sequence diagram version
+
+### ✅ Mermaid architecture with AWS icons (ASCII-styled)
+
+Just tell me your preference!
+
+
+
