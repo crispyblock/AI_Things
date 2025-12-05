@@ -13,7 +13,7 @@ flowchart TD
     %% Developer & CI/CD
     %% ===============================
 
-    DEV[Developer<br/>(Code / Commits)]
+    DEV[Developer (Code / Commits)]
     CICD[CI/CD Pipeline<br/>- Linting<br/>- Unit Tests<br/>- IaC Scans]
 
     DEV --> CICD
