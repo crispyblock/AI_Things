@@ -1,6 +1,7 @@
 # Diagram
 
 mermaid```
+
 flowchart TD
 
     SNS[SNS Topic\napp-notification-topic] -->|Triggers| LAMBDA[Lambda Function\nsns-trigger-lambda]
