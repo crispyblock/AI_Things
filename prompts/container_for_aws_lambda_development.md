@@ -61,10 +61,14 @@ ENV PATH=$PATH:/usr/local/go/bin
 ENV GOPATH=/go
 ENV PATH=$PATH:$GOPATH/bin
 
-# Install Terraform
-RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
-    && apt-add-repository "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" \
-    && apt-get update && apt-get install -y terraform
+# Install tfenv (Terraform version manager)
+RUN git clone https://github.com/tfutils/tfenv.git /usr/local/tfenv \
+    && ln -s /usr/local/tfenv/bin/* /usr/local/bin/
+
+# Install a specific Terraform version via tfenv
+# (Change version as needed)
+ENV TF_VERSION=1.6.5
+RUN tfenv install $TF_VERSION && tfenv use $TF_VERSION
 
 # Install AWS CLI v2
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
